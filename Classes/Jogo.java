@@ -1,23 +1,31 @@
 package Classes;
 
+import Interfaces.Ijogador;
 import Interfaces.Ijogo;
 
-import java.util.Random;
-import java.util.Scanner;
+import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 public class Jogo implements Ijogo {
 
-    public Jogo(){}
+    private List<Ijogador> jogadores;
+    public Jogo(){
+        jogadores = new ArrayList<>();
+    }
     @Override
     public void motrarMenu() {
         System.out.println("Seja bem vindo ao jogo Par ou Impar! \n\n");
         System.out.println("Menu:");
         System.out.println("1. jogar");
-        System.out.println("4. Sair");
+        System.out.println("2. Ver Histórico de Jogadas");
+        System.out.println("3. Ver Ranking");
+        System.out.println("4. Sair \n");
+        System.out.print("Escolha uma opção: ");
 
     }
 
-    public void jogoParOuImpar(Scanner scan){
+    public void jogoParOuImpar(Scanner scan, Ijogador jogador){
         String sair = "sim";
         do {
             System.out.println("Instruções: Você escolherá ser Par ou Ímpar e em seguida escolherá um número de 0 a 10.\n" +
@@ -44,14 +52,42 @@ public class Jogo implements Ijogo {
             System.out.println(resultado.toUpperCase() + " venceu!");
             System.out.println("\n");
 
+            String historico= jogador.getNome()+": "+escolha+"" +
+                    ", "+jogador.getNome()+": "+jogada+", Computador: "+jogadaComputador+", Resultado: ";
             if (resultado.equalsIgnoreCase(escolha)) {
+                jogador.registrarVitoria();
                 System.out.println("Você ganhou!");
+                historico += "Vitória!";
             } else {
+                jogador.registrarDerrota();
                 System.out.println("Você perdeu.");
+                historico += "derrota.";
             }
+            jogador.adicionarHistorico(historico);
+
             System.out.println("Deseja jogar novamente? [sim/nao]");
             sair = scan.next();
             sair += scan.nextLine();
+
         }while (sair.equalsIgnoreCase("sim"));
+    }
+
+    public void adicionarJogador(Ijogador jogador){
+        jogadores.add(jogador);
+    }
+
+
+    public void mostrarRankingJogador(){
+
+        ArrayList<Ijogador> sortedJogadores = (ArrayList<Ijogador>)this.jogadores
+                .stream().sorted(Comparator.comparing(Ijogador::getPontuacao).reversed())
+                .collect(Collectors.toList());
+
+        System.out.println("Lista de jogadores");
+        for(Ijogador j:sortedJogadores){
+            System.out.println("Nome: " + j.getNome() + " Pontução: "+j.getPontuacao());
+        }
+
+
     }
 }

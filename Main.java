@@ -27,7 +27,7 @@ public class Main {
                     jogador.mostrarHistorico();
                     break;
                 case(3):
-                    jogo.mostrarRankingJogador();
+                    jogo.mostrarRanking();
                     break;
                 case(4):
                     return;

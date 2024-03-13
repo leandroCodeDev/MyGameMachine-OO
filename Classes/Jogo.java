@@ -22,7 +22,6 @@ public class Jogo implements Ijogo {
         System.out.println("3. Ver Ranking");
         System.out.println("4. Sair \n");
         System.out.print("Escolha uma opção: ");
-
     }
 
     public void jogoParOuImpar(Scanner scan, Ijogador jogador){
@@ -56,10 +55,12 @@ public class Jogo implements Ijogo {
                     ", "+jogador.getNome()+": "+jogada+", Computador: "+jogadaComputador+", Resultado: ";
             if (resultado.equalsIgnoreCase(escolha)) {
                 jogador.registrarVitoria();
+                this.ordenarVitoriaJogador(jogador);
                 System.out.println("Você ganhou!");
                 historico += "Vitória!";
             } else {
                 jogador.registrarDerrota();
+                this.ordenarDerrotaJogador(jogador);
                 System.out.println("Você perdeu.");
                 historico += "derrota.";
             }
@@ -76,15 +77,46 @@ public class Jogo implements Ijogo {
         jogadores.add(jogador);
     }
 
+    public void ordenarDerrotaJogador(Ijogador jogador){
+        int posicao = jogadores.indexOf(jogador);
+        for (int i = posicao; i < jogadores.size(); i++) {
+            if(posicao == jogadores.size()-1){
+                return;
+            }
+            Ijogador jogadorAbaixo =  jogadores.get(posicao+1);
+            if(jogador.getPontuacao() < jogadorAbaixo.getPontuacao() ){
+                Collections.swap(jogadores,posicao,posicao+1);
+                posicao= posicao+1;
+            }else{
+                return;
+            }
+        }
+    }
 
-    public void mostrarRankingJogador(){
+    public void ordenarVitoriaJogador(Ijogador jogador){
+        int posicao = jogadores.indexOf(jogador);
+        for (int i = jogadores.size(); 0 < i; i--) {
+            if(posicao == 0){
+                return;
+            }
+            Ijogador jogadorAcima =  jogadores.get(posicao-1);
 
-        ArrayList<Ijogador> sortedJogadores = (ArrayList<Ijogador>)this.jogadores
-                .stream().sorted(Comparator.comparing(Ijogador::getPontuacao).reversed())
-                .collect(Collectors.toList());
+            if(jogador.getPontuacao() > jogadorAcima.getPontuacao() ){
+                Collections.swap(jogadores,posicao,posicao-1);
+                posicao= posicao-1;
+
+            }else{
+                return;
+            }
+        }
+    }
+
+
+
+    public void mostrarRanking(){
 
         System.out.println("Lista de jogadores");
-        for(Ijogador j:sortedJogadores){
+        for(Ijogador j:jogadores){
             System.out.println("Nome: " + j.getNome() + " Pontução: "+j.getPontuacao());
         }
 
